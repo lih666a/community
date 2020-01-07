@@ -2,7 +2,7 @@ package life.lih.community.controller;
 
 import life.lih.community.mapper.QuestionMapper;
 import life.lih.community.mapper.UserMapper;
-import life.lih.community.model.Questtion;
+import life.lih.community.model.Question;
 import life.lih.community.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,6 +35,27 @@ public class PublishController {
             HttpServletRequest request,
             Model model
             ){
+
+    model.addAttribute("title",title);
+    model.addAttribute("description",description);
+    model.addAttribute("tag",tag);
+
+    if(title==null||title==""){
+        model.addAttribute("error","标题不能为空");
+        return "publish";
+    }
+    if(description==null||description==""){
+        model.addAttribute("error","问题补充不能为空");
+        return "publish";
+    }
+    if(tag==null||tag==""){
+        model.addAttribute("error","标签不能为空");
+        return "publish";
+    }
+
+
+
+
     User user=null;
     Cookie[] cookies = request.getCookies();
     if (cookies!=null){
@@ -51,16 +72,18 @@ public class PublishController {
     if(user==null){
         model.addAttribute("error","用户未登录");
         return "publish";
-
     }
-    Questtion questtion = new Questtion();
-    questtion.setTitle(title);
-    questtion.setDescription(description);
-    questtion.setTag(tag);
-    questtion.setCreator(user.getId());
-    questtion.setGmtCreate(System.currentTimeMillis());
-    questtion.setGmtModified(questtion.getGmtCreate());
-    questionMapper.create(questtion);
+
+
+
+    Question question = new Question();
+    question.setTitle(title);
+    question.setDescription(description);
+    question.setTag(tag);
+    question.setCreator(user.getId());
+    question.setGmtCreate(System.currentTimeMillis());
+    question.setGmtModified(question.getGmtCreate());
+    questionMapper.create(question);
 
     return "redirect:/";
     }

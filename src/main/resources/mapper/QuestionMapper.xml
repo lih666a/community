@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="life.lih.community.mapper.QuestionMapper">
+
+    <resultMap id="AResultMap" type="QuestionDTO">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="tag" property="tag" jdbcType="VARCHAR"/>
+        <result column="gmt_create" property="gmtCreate" jdbcType="BIGINT"/>
+        <result column="gmt_modified" property="gmtModified" jdbcType="BIGINT"/>
+        <result column="creator" property="creator" jdbcType="INTEGER"/>
+        <result column="comment_count" property="commentCount" jdbcType="INTEGER"/>
+        <result column="view_count" property="viewCount" jdbcType="INTEGER"/>
+        <result column="like_count" property="likeCount" jdbcType="INTEGER"/>
+
+        <association property="user" javaType="User">
+            <id column="id" property="id"/>
+            <result column="avatar_url" property="avatar_url"/>
+        </association>
+    </resultMap>
+
+    <select id="list" resultMap="AResultMap">
+        SELECT * from question q,user u where q.creator=u.id
+    </select>
+    <insert id="create" parameterType="Question">
+       insert into question
+                (title,description,gmt_create,gmt_modified,creator,tag) values
+                    (#{title},#{description},#{gmtCreate},#{gmtModified},#{creator},#{tag})
+    </insert>
+</mapper>
