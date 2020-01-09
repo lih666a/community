@@ -6,12 +6,16 @@ import life.lih.community.model.User;
 import life.lih.community.service.QuestionService;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Controller
 public class IndexController {
@@ -23,21 +27,14 @@ public class IndexController {
     public  String Index(HttpServletRequest request){
         Cookie[] cookies = request.getCookies();
         if (cookies!=null){
-            for (Cookie cookie : cookies) {
-                if("token".equals(cookie.getName())){
-                    String token=cookie.getValue();
-                    User user =userMapper.findByToken(token);
-                    System.out.println(user);
-                    if (user !=null)
-                        request.getSession().setAttribute("user",user);
-                    break;
-
-
-                }
+            Stream<User> user = Arrays.stream(cookies).filter(cookie -> "token".equals(cookie.getName())).map(token -> userMapper.findByToken(token.getValue()));
+            if (user!=null){
+                request.getSession().setAttribute("user",user);
             }
         }
 
         return "index";
+
     }
 
 
