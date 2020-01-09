@@ -15,6 +15,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Controller
@@ -27,14 +29,15 @@ public class IndexController {
     public  String Index(HttpServletRequest request){
         Cookie[] cookies = request.getCookies();
         if (cookies!=null){
-            Stream<User> user = Arrays.stream(cookies).filter(cookie -> "token".equals(cookie.getName())).map(token -> userMapper.findByToken(token.getValue()));
+            User user = Arrays.stream(cookies).filter(cookie -> "token".equals(cookie.getName())).map(token -> userMapper.findByToken(token.getValue())).collect(Collectors.toList()).get(0);
             if (user!=null){
                 request.getSession().setAttribute("user",user);
             }
+
         }
 
-        return "index";
 
+        return "index";
     }
 
 
